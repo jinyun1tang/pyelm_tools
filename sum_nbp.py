@@ -59,6 +59,6 @@ else:
             first=False
         else:
             ts=get_nbpts(histf)
-            nbpts=np.concatenate(nbpts,ts)
+            nbpts=np.concatenate((nbpts,ts))
 
 print nbpts
