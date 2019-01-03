@@ -55,10 +55,10 @@ else:
         syear='%04d'%year
         newf=histf.replace(xyear,syear)
         if first:
-            nbpts=get_nbpts(histf)
+            nbpts=get_nbpts(newf)
             first=False
         else:
-            ts=get_nbpts(histf)
+            ts=get_nbpts(newf)
             nbpts=np.concatenate((nbpts,ts))
 
 print nbpts
