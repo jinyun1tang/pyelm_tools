@@ -56,6 +56,7 @@ else:
         newf=histf.replace(xyear,syear)
         if first:
             nbpts=get_nbpts(histf)
+            first=False
         else:
             ts=get_nbpts(histf)
             nbpts=np.concatenate(nbpts,ts)
