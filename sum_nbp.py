@@ -1,5 +1,6 @@
 import numpy as np
 from netCDF4 import Dataset
+import os,time,sys,argparse
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--h0file', dest="h0file", metavar='h0file', type=str, nargs=1, default=[""],
@@ -23,4 +24,4 @@ gnh3flx=np.squeeze(nh3flx_soie*garea)
 
 elmfl.close()
 
-print np.sum(gnh3flx)*g2pg
+print np.nansum(gnh3flx)*g2pg
