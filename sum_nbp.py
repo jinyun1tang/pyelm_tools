@@ -28,6 +28,8 @@ parser.add_argument('--h0file', dest="h0file", metavar='h0file', type=str, nargs
 parser.add_argument('--model_year', dest="model_year", metavar='beg_year end_year', type=int, nargs=2, default=[],
   help='the start and end of model year')
 
+parser.add_argument('--csv_file', dest="csv_file", metavar='csv_file', type=str, nargs=1, default=[""],
+  help='csv file to output results')
 
 
 args = parser.parse_args()
@@ -62,3 +64,9 @@ else:
             nbpts=np.concatenate((nbpts,ts))
 
 print nbpts
+
+
+csv_file=args.csv_file[0]
+
+if csv_file:
+    np.savetxt(csv_file, nbpts, delimiter=",")
