@@ -64,7 +64,7 @@ else:
             ts=get_vegcts(newf)
             vegcts=np.concatenate((vegcts,ts))
 
-print vegcts
+print (vegcts)
 
 
 csv_file=args.csv_file[0]

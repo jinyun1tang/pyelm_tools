@@ -5,20 +5,20 @@ import os,time,sys,argparse
 import warnings
 warnings.filterwarnings("ignore")
 
-def get_hrts(histf):
+def get_nppts(histf):
     elmfl=Dataset(histf,"r")
 
     area=elmfl.variables["area"][:]
     landfr=elmfl.variables["landfrac"][:]
-    hr_flx=elmfl.variables["HR"][:]
+    npp_flx=elmfl.variables["NPP"][:]
     garea=landfr*area
-    nts=hr_flx.shape[0]
-    hrts=np.zeros(nts)
+    nts=npp_flx.shape[0]
+    nppts=np.zeros(nts)
     for j in range(nts):
-        hrflx=np.squeeze(hr_flx[j,:,:]*garea)
-        hrts[j]=np.nansum(hrflx)*g2pg
+        nppflx=np.squeeze(npp_flx[j,:,:]*garea)
+        nppts[j]=np.nansum(nppflx)*g2pg
     elmfl.close()
-    return hrts
+    return nppts
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--h0file', dest="h0file", metavar='h0file', type=str, nargs=1, default=[""],
@@ -48,7 +48,7 @@ g2pg=1.e6*365.0*86400.0*1.e-15
 
 
 if year1 > year2:
-    hrts=get_hrts(histf)
+    nppts=get_nppts(histf)
 else:
     k=histf.find('.h0.')
     xyear=histf[(k+4):(k+8)]
@@ -57,16 +57,16 @@ else:
         syear='%04d'%year
         newf=histf.replace(xyear,syear)
         if first:
-            hrts=get_hrts(newf)
+            nppts=get_nppts(newf)
             first=False
         else:
-            ts=get_hrts(newf)
-            hrts=np.concatenate((hrts,ts))
+            ts=get_nppts(newf)
+            nppts=np.concatenate((nppts,ts))
 
-print (hrts)
+print (nppts)
 
 
 csv_file=args.csv_file[0]
 
 if csv_file:
-    np.savetxt(csv_file, hrts, delimiter=",")
+    np.savetxt(csv_file, nppts, delimiter=",")

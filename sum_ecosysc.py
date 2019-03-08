@@ -5,20 +5,22 @@ import os,time,sys,argparse
 import warnings
 warnings.filterwarnings("ignore")
 
-def get_hrts(histf):
+g2pg=1.e6*1.e-15
+
+def get_vegcts(histf):
     elmfl=Dataset(histf,"r")
 
     area=elmfl.variables["area"][:]
     landfr=elmfl.variables["landfrac"][:]
-    hr_flx=elmfl.variables["HR"][:]
+    vegc_ste=elmfl.variables["TOTECOSYSC"][:]
     garea=landfr*area
-    nts=hr_flx.shape[0]
-    hrts=np.zeros(nts)
+    nts=vegc_ste.shape[0]
+    vegcts=np.zeros(nts)
     for j in range(nts):
-        hrflx=np.squeeze(hr_flx[j,:,:]*garea)
-        hrts[j]=np.nansum(hrflx)*g2pg
+        vegcste=np.squeeze(vegc_ste[j,:,:]*garea)
+        vegcts[j]=np.nansum(vegcste)*g2pg
     elmfl.close()
-    return hrts
+    return vegcts
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--h0file', dest="h0file", metavar='h0file', type=str, nargs=1, default=[""],
@@ -44,11 +46,10 @@ else:
     year1=model_year[0]
     year2=model_year[1]
 
-g2pg=1.e6*365.0*86400.0*1.e-15
 
 
 if year1 > year2:
-    hrts=get_hrts(histf)
+    vegcts=get_vegcts(histf)
 else:
     k=histf.find('.h0.')
     xyear=histf[(k+4):(k+8)]
@@ -57,16 +58,16 @@ else:
         syear='%04d'%year
         newf=histf.replace(xyear,syear)
         if first:
-            hrts=get_hrts(newf)
+            vegcts=get_vegcts(newf)
             first=False
         else:
-            ts=get_hrts(newf)
-            hrts=np.concatenate((hrts,ts))
+            ts=get_vegcts(newf)
+            vegcts=np.concatenate((vegcts,ts))
 
-print (hrts)
+print (vegcts)
 
 
 csv_file=args.csv_file[0]
 
 if csv_file:
-    np.savetxt(csv_file, hrts, delimiter=",")
+    np.savetxt(csv_file, vegcts, delimiter=",")

@@ -63,7 +63,7 @@ else:
             ts=get_nbpts(newf)
             nbpts=np.concatenate((nbpts,ts))
 
-print nbpts
+print (nbpts)
 
 
 csv_file=args.csv_file[0]
