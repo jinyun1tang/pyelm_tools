@@ -10,7 +10,7 @@ def get_gppts(histf):
 
     area=elmfl.variables["area"][:]
     landfr=elmfl.variables["landfrac"][:]
-    gpp_flx=elmfl.variables["GPP"][:]
+    gpp_flx=elmfl.variables["NFIX_TO_ECOSYSN"][:]
     garea=landfr*area
     nts=gpp_flx.shape[0]
     gppts=np.zeros(nts)
