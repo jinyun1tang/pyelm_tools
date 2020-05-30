@@ -55,7 +55,10 @@ g2tg=1.e6*365.0*86400.0*1.e-12
 # 'F_N2O_NIT'
 # 'F_N2O_DENIT'
 # 'F_NIT'
-
+# 'COL_FIRE_NLOSS'   total loss to fire
+# 'PROD1N_LOSS'
+# 'WOOD_HARVESTN'
+# 'PFT_FIRE_NLOSS'  vegetation loss to fire
 if year1 > year2:
     nfix=get_varts(histf,'NFIX_TO_ECOSYSN')
     ndep=get_varts(histf,'NDEP_TO_SMINN')
