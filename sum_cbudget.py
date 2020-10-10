@@ -69,6 +69,7 @@ if year1 > year2:
     cwdhr=get_varts(histf,'CWDC_HR')
     er=get_varts(histf,'ER')
     nep=get_varts(histf,'NEP')
+    fire=get_varts(histf,'PFT_FIRE_CLOSS')
     nbp=get_varts(histf,'NBP')
 else:
     k=histf.find('.h0.')
@@ -87,6 +88,7 @@ else:
             cwdhr=get_varts(histf,'CWDC_HR')
             er=get_varts(histf,'ER')
             nep=get_varts(histf,'NEP')
+            fire=get_varts(histf,'PFT_FIRE_CLOSS')
             nbp=get_varts(histf,'NBP')
             first=False
         else:
@@ -108,15 +110,18 @@ else:
             er=np.concatenate((er,ts))
             ts=get_varts(newf,'NEP')
             nep=np.concatenate((nep,ts))
+            ts=get_varts(histf,'PFT_FIRE_CLOSS')
+            fire=np.concatenate((fire,ts))
             ts=get_varts(newf,'NBP')
             nbp=np.concatenate((nbp,ts))
 
 
-print ('gpp    ,npp    ,ar     ,hr     ,lithr  ,somhr  ,cwdhr  ,er     ,nep    ,nbp')
+print ('gpp    ,npp    ,ar     ,hr     ,lithr  ,somhr  ,cwdhr  ,er     ,nep    ,fire   ,nbp')
 for j in range(len(gpp)):
-    print ('%-7.2f,%-7.2f,%-7.2f,%-7.2f,%-7.2f,%-7.2f,%-7.2f,%-7.2f,%-7.2f,%-7.2f'%(gpp[j],npp[j],ar[j],hr[j],lithr[j],somhr[j],cwdhr[j],er[j],nep[j],nbp[j]))
+    print ('%-7.2f,%-7.2f,%-7.2f,%-7.2f,%-7.2f,%-7.2f,%-7.2f,%-7.2f,%-7.2f,%-7.2f,%-7.2f'%(gpp[j],
+        npp[j],ar[j],hr[j],lithr[j],somhr[j],cwdhr[j],er[j],nep[j],fire[j],nbp[j]))
 
-nbgt=np.transpose(np.array([gpp,npp,ar,hr,er,nbp]))
+nbgt=np.transpose(np.array([gpp,npp,ar,hr,lithr,somhr,cwdhr,er,nep,fire,nbp]))
 csv_file=args.csv_file[0]
 
 if csv_file:
