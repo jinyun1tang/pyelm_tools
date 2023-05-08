@@ -20,6 +20,12 @@ def get_varts(histf,varname):
     elmfl.close()
     return gppts
 
+def is_monthly(histf):
+    strx=histf.split('.')
+    print(len(strx[-2]))
+    return len(strx[-2])==7
+
+
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--h0file', dest="h0file", metavar='h0file', type=str, nargs=1, default=[""],
   help='the original app to be cloned')
@@ -45,7 +51,6 @@ else:
     year2=model_year[1]
 
 g2tg=1.e6*365.0*86400.0*1.e-12
-
 #variables
 # "NFIX_TO_ECOSYSN"
 # 'NDEP_TO_SMINN'
@@ -60,48 +65,110 @@ g2tg=1.e6*365.0*86400.0*1.e-12
 # 'WOOD_HARVESTN'
 # 'PFT_FIRE_NLOSS'  vegetation loss to fire
 if year1 > year2:
-    nfix=get_varts(histf,'NFIX_TO_ECOSYSN')
-    ndep=get_varts(histf,'NDEP_TO_SMINN')
-    fden=get_varts(histf,'F_DENIT')
-    no3lech=get_varts(histf,'SMIN_NO3_LEACHED')
-    no3roff=get_varts(histf,'SMIN_NO3_RUNOFF')
-    f_n2o_nit=get_varts(histf,'F_N2O_NIT')
-    f_n2o_denit=get_varts(histf,'F_N2O_DENIT')
-    fnit=get_varts(histf,'F_NIT')
+    k=histf.find('.h0.')
+    first=True
+    if is_monthly(histf):
+        xyear=histf[(k+4):(k+11)]
+        for m in range(1,13):
+            syear=histf[(k+4):(k+8)]+'-%02d'%m
+            newf=histf.replace(xyear,syear)
+            print(newf)
+            if first:
+                nfix=get_varts(newf,'NFIX_TO_ECOSYSN')
+                ndep=get_varts(newf,'NDEP_TO_SMINN')
+                fden=get_varts(newf,'F_DENIT')
+                no3lech=get_varts(newf,'SMIN_NO3_LEACHED')
+                no3roff=get_varts(newf,'SMIN_NO3_RUNOFF')
+                f_n2o_nit=get_varts(newf,'F_N2O_NIT')
+                f_n2o_denit=get_varts(newf,'F_N2O_DENIT')
+                fnit=get_varts(newf,'F_NIT')
+                first=False
+            else:
+                ts=get_varts(newf,'NFIX_TO_ECOSYSN')
+                nfix=np.concatenate((nfix,ts))
+                ts=get_varts(newf,'NDEP_TO_SMINN')
+                ndep=np.concatenate((ndep,ts))
+                ts=get_varts(newf,'F_DENIT')
+                fden=np.concatenate((fden,ts))
+                ts=get_varts(newf,'SMIN_NO3_LEACHED')
+                no3lech=np.concatenate((no3lech,ts))
+                ts=get_varts(newf,'SMIN_NO3_RUNOFF')
+                no3roff=np.concatenate((no3roff,ts))
+                ts=get_varts(newf,'F_N2O_NIT')
+                f_n2o_nit=np.concatenate((f_n2o_nit,ts))
+                ts=get_varts(newf,'F_N2O_DENIT')
+                f_n2o_denit=np.concatenate((f_n2o_denit,ts))
+                ts=get_varts(newf,'F_NIT')
+                fnit=np.concatenate((fnit,ts))
 else:
     k=histf.find('.h0.')
-    xyear=histf[(k+4):(k+8)]
     first=True
-    for year in range(year1,year2+1):
-        syear='%04d'%year
-        newf=histf.replace(xyear,syear)
-        if first:
-            nfix=get_varts(newf,'NFIX_TO_ECOSYSN')
-            ndep=get_varts(newf,'NDEP_TO_SMINN')
-            fden=get_varts(newf,'F_DENIT')
-            no3lech=get_varts(newf,'SMIN_NO3_LEACHED')
-            no3roff=get_varts(newf,'SMIN_NO3_RUNOFF')
-            f_n2o_nit=get_varts(newf,'F_N2O_NIT')
-            f_n2o_denit=get_varts(newf,'F_N2O_DENIT')
-            fnit=get_varts(newf,'F_NIT')
-            first=False
-        else:
-            ts=get_varts(newf,'NFIX_TO_ECOSYSN')
-            nfix=np.concatenate((nfix,ts))
-            ts=get_varts(newf,'NDEP_TO_SMINN')
-            ndep=np.concatenate((ndep,ts))
-            ts=get_varts(newf,'F_DENIT')
-            fden=np.concatenate((fden,ts))
-            ts=get_varts(newf,'SMIN_NO3_LEACHED')
-            no3lech=np.concatenate((no3lech,ts))
-            ts=get_varts(newf,'SMIN_NO3_RUNOFF')
-            no3roff=np.concatenate((no3roff,ts))
-            ts=get_varts(newf,'F_N2O_NIT')
-            f_n2o_nit=np.concatenate((f_n2o_nit,ts))
-            ts=get_varts(newf,'F_N2O_DENIT')
-            f_n2o_denit=np.concatenate((f_n2o_denit,ts))
-            ts=get_varts(newf,'F_NIT')
-            fnit=np.concatenate((fnit,ts))
+    if is_monthly(histf):
+        xyear=histf[(k+4):(k+11)]
+        for year in range(year1,year2+1):
+            for m in range(1,13):
+                syear='%04d-%02d'%(year,m)
+                newf=histf.replace(xyear,syear)
+                print(newf)
+                if first:
+                    nfix=get_varts(newf,'NFIX_TO_ECOSYSN')
+                    ndep=get_varts(newf,'NDEP_TO_SMINN')
+                    fden=get_varts(newf,'F_DENIT')
+                    no3lech=get_varts(newf,'SMIN_NO3_LEACHED')
+                    no3roff=get_varts(newf,'SMIN_NO3_RUNOFF')
+                    f_n2o_nit=get_varts(newf,'F_N2O_NIT')
+                    f_n2o_denit=get_varts(newf,'F_N2O_DENIT')
+                    fnit=get_varts(newf,'F_NIT')
+                    first=False
+                else:
+                    ts=get_varts(newf,'NFIX_TO_ECOSYSN')
+                nfix=np.concatenate((nfix,ts))
+                ts=get_varts(newf,'NDEP_TO_SMINN')
+                ndep=np.concatenate((ndep,ts))
+                ts=get_varts(newf,'F_DENIT')
+                fden=np.concatenate((fden,ts))
+                ts=get_varts(newf,'SMIN_NO3_LEACHED')
+                no3lech=np.concatenate((no3lech,ts))
+                ts=get_varts(newf,'SMIN_NO3_RUNOFF')
+                no3roff=np.concatenate((no3roff,ts))
+                ts=get_varts(newf,'F_N2O_NIT')
+                f_n2o_nit=np.concatenate((f_n2o_nit,ts))
+                ts=get_varts(newf,'F_N2O_DENIT')
+                f_n2o_denit=np.concatenate((f_n2o_denit,ts))
+                ts=get_varts(newf,'F_NIT')
+                fnit=np.concatenate((fnit,ts))
+    else:
+        xyear=histf[(k+4):(k+8)]
+        for year in range(year1,year2+1):
+            syear='%04d'%year
+            newf=histf.replace(xyear,syear)
+            if first:
+                nfix=get_varts(newf,'NFIX_TO_ECOSYSN')
+                ndep=get_varts(newf,'NDEP_TO_SMINN')
+                fden=get_varts(newf,'F_DENIT')
+                no3lech=get_varts(newf,'SMIN_NO3_LEACHED')
+                no3roff=get_varts(newf,'SMIN_NO3_RUNOFF')
+                f_n2o_nit=get_varts(newf,'F_N2O_NIT')
+                f_n2o_denit=get_varts(newf,'F_N2O_DENIT')
+                fnit=get_varts(newf,'F_NIT')
+                first=False
+            else:
+                ts=get_varts(newf,'NFIX_TO_ECOSYSN')
+                nfix=np.concatenate((nfix,ts))
+                ts=get_varts(newf,'NDEP_TO_SMINN')
+                ndep=np.concatenate((ndep,ts))
+                ts=get_varts(newf,'F_DENIT')
+                fden=np.concatenate((fden,ts))
+                ts=get_varts(newf,'SMIN_NO3_LEACHED')
+                no3lech=np.concatenate((no3lech,ts))
+                ts=get_varts(newf,'SMIN_NO3_RUNOFF')
+                no3roff=np.concatenate((no3roff,ts))
+                ts=get_varts(newf,'F_N2O_NIT')
+                f_n2o_nit=np.concatenate((f_n2o_nit,ts))
+                ts=get_varts(newf,'F_N2O_DENIT')
+                f_n2o_denit=np.concatenate((f_n2o_denit,ts))
+                ts=get_varts(newf,'F_NIT')
+                fnit=np.concatenate((fnit,ts))
 
 print ('nfix , ndep, denit, no3_lech, no3_roff, n2o_nit, n2o_denit, nit, res')
 for j in range(len(nfix)):
