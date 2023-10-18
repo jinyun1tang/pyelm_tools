@@ -32,11 +32,13 @@ data_file = netCDF4.Dataset(nc_file, 'a')
 variable_names = list(data_file.variables.keys())
 
 for var in variable_names:
+    variable=data_file[var]  
+    dimension_names = variable.dimensions
     matches = [string for string in flag_strings if string == var]
     if not matches:
         dataval=data_file[var][:]        
         ndim=len(dataval.shape)
-        if ndim==1:
+        if ndim==1 and dimension_names[0]=='pft':
             for j in range(len(pft_flag)):
                 if dataval[j]!=dataval[j] and pft_flag[j]==1:
                     dataval[j]=0.
