@@ -16,7 +16,7 @@ def get_nppts(histf):
     nppts=np.zeros(nts)
     for j in range(nts):
         nppflx=np.squeeze(npp_flx[j,:,:]*garea)
-        nppts[j]=np.nansum(nppflx)*g2pg
+        nppts[j]=np.nansum(nppflx)
     elmfl.close()
     return nppts
 
