@@ -46,7 +46,6 @@ else:
 
 g2pg=1.e6*86400.0*1.e-15
 
-
 year_mon_match = re.search(r'\.h0\.(\d{4})-(\d{2})\.nc$', histf)
 daz=[31.,28.,31.,30.,31.,30.,31.,31.,30.,31.,30.,31]
 if year1 > year2:
